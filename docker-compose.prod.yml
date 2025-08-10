@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: mongo_local
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    container_name: nest_api
+    environment:
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo:27017/nest_auth
+      - MONGODB_DBNAME=nest_auth
+      - JWT_SECRET=please_change_me
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongo
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
