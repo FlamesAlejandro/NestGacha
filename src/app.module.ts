@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { ConfigModule } from '@nestjs/config'
 import { DatabaseModule } from './common/connections/mongo.connection.import'
+import { AccessModule } from './access/access.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { DatabaseModule } from './common/connections/mongo.connection.import'
     }),
     DatabaseModule,
     AuthModule,
-    UsersModule
+    UsersModule,
+    AccessModule
   ],
   controllers: [AppController],
   providers: [AppService]
