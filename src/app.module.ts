@@ -4,18 +4,16 @@ import { AppService } from './app.service'
 import { AuthModule } from './auth/auth.module'
 import { UsersModule } from './users/users.module'
 import { ConfigModule } from '@nestjs/config'
-import { DatabaseModule } from './common/connections/mongo.connection.import'
-import { AccessModule } from './access/access.module';
+import { DatabaseModule } from './connections/mongo.connection.import'
+import { RbacModule } from '@access/rbac.module'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
+    RbacModule,
     AuthModule,
-    UsersModule,
-    AccessModule
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService]
