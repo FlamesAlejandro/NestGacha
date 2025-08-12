@@ -19,6 +19,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@connections/*": ["src/connections/*"],
       "@common/*": ["src/common/*"],
       "@access/*": ["src/access/*"]
     }
