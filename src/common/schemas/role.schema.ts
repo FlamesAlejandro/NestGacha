@@ -8,6 +8,7 @@ export type RoleDocument = HydratedDocument<Role>
 export class Role {
   @Prop({ required: true, unique: true })
   key: string
+
   @Prop()
   label: string
 

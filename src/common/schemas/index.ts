@@ -1,2 +1,5 @@
 export * from './role.schema'
 export * from './user.schema'
+export * from './banner.schema'
+export * from './gacha-history.schema'
+export * from './character.schema'
