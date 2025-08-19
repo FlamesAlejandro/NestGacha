@@ -8,6 +8,7 @@ import { DatabaseModule } from './connections/mongo.connection.import'
 import { RbacModule } from '@access/rbac.module'
 import { GachaModule } from './gacha/gacha.module'
 import { BullModule } from '@nestjs/bull'
+import { CharactersModule } from './characters/characters.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { BullModule } from '@nestjs/bull'
     RbacModule,
     AuthModule,
     UsersModule,
-    GachaModule
+    GachaModule,
+    CharactersModule
   ],
   controllers: [AppController],
   providers: [AppService]
