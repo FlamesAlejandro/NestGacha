@@ -2,7 +2,7 @@ import { CharacterRarityEnum, CharacterStateEnum } from '@common/enums'
 import { InjectQueue } from '@nestjs/bull'
 import { Injectable, Logger } from '@nestjs/common'
 import { Queue } from 'bull'
-import { PullDto } from './dtos/Pull.dto'
+import { FullPullDto } from './dtos/Pull.dto'
 import { BannersService } from 'src/banners/banners.service'
 import { getRatesByBannerType, rollRarity } from './utils/pull-rates.util'
 import { CharactersService } from 'src/characters/characters.service'
@@ -19,7 +19,7 @@ export class GachaService {
     private readonly gachaTransactional: GachaTransactionalService
   ) {}
 
-  async createQueue(dto: PullDto): Promise<any> {
+  async createQueue(dto: FullPullDto): Promise<any> {
     try {
       //cola de Bull
       await this.gachaQueue.add('processGacha', dto, {
@@ -32,7 +32,7 @@ export class GachaService {
     }
   }
 
-  async handlePullRequest(job: PullDto): Promise<any> {
+  async handlePullRequest(job: FullPullDto): Promise<any> {
     try {
       const { userId, bannerId, pulls } = job
       // obtener la banner
@@ -54,14 +54,12 @@ export class GachaService {
         const rarity = rollRarity(rates)
         byRarity[rarity]++
       }
-
       // obtener personajes por rareza
       const charactersFromGacha: PickedCharacter[] =
         await this.characterService.pickManyGrouped(
           byRarity,
           CharacterStateEnum.Standard
         )
-
       // commit transaccional
       await this.gachaTransactional.commitPull({
         userId,
@@ -70,7 +68,6 @@ export class GachaService {
         byRarity,
         charactersFromGacha
       })
-
       return { charactersGranted: charactersFromGacha }
     } catch (error) {
       throw new Error('Error procesando el pull' + error)
