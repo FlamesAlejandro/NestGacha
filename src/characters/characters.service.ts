@@ -5,13 +5,18 @@ import { InjectModel } from '@nestjs/mongoose'
 import { Character, CharacterDocument } from '@common/schemas'
 import { Model } from 'mongoose'
 import { CharacterRarityEnum, CharacterStateEnum } from '@common/enums'
+import { SeedCharactersDto } from './dto/seed-character.dto'
+import axios from 'axios'
+import { CharacterFactory } from './factories/characters.factory'
+import { JikanAnimeCharacterItem } from './interfaces/jikan.interface'
 
 @Injectable()
 export class CharactersService {
-  private logger = new Logger(CharactersService.name)
+  private readonly logger = new Logger(CharactersService.name)
   constructor(
     @InjectModel(Character.name)
-    private readonly characterModel: Model<CharacterDocument>
+    private readonly characterModel: Model<CharacterDocument>,
+    private readonly characterFactory: CharacterFactory
   ) {}
 
   async create(createCharacterDto: CreateCharacterDto) {
@@ -65,6 +70,33 @@ export class CharactersService {
     } catch (error) {
       this.logger.error('Error picking characters', error)
       throw new Error('Error picking characters: ' + error.message)
+    }
+  }
+
+  async importFromAnime(dto: SeedCharactersDto) {
+    const { animeId } = dto
+
+    try {
+      const url = `https://api.jikan.moe/v4/anime/${animeId}/characters`
+      const { data } = await axios.get(url)
+      const items = (data?.data ?? []) as JikanAnimeCharacterItem[]
+
+      if (!items.length)
+        throw new NotFoundException(
+          'No se encontraron personajes para ese anime'
+        )
+
+      const chosen = items.slice(0, 20)
+
+      const rarities = this.characterFactory.getDefaultDistribution(20)
+      const docs = this.characterFactory.mapCharactersToCreate(chosen, rarities)
+      const inserted = await this.characterModel.insertMany(docs, {
+        ordered: false
+      })
+      return { inserted: inserted.length, items: inserted }
+    } catch (error) {
+      this.logger.error('Error importing characters', error)
+      throw error
     }
   }
 }

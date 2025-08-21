@@ -24,6 +24,11 @@ export class Character {
     index: true
   })
   state!: CharacterStateEnum
+
+  @Prop() imageUrl: string
+
+  @Prop({ index: true }) malId?: number
 }
 
 export const CharacterSchema = SchemaFactory.createForClass(Character)
+export type ICharacter = Omit<Character, 'createdAt' | 'updatedAt'>
