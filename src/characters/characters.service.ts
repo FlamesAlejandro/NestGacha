@@ -9,6 +9,7 @@ import { SeedCharactersDto } from './dto/seed-character.dto'
 import axios from 'axios'
 import { CharacterFactory } from './factories/characters.factory'
 import { JikanAnimeCharacterItem } from './interfaces/jikan.interface'
+import { PickedCharacter } from './interfaces/picked-characters.interface'
 
 @Injectable()
 export class CharactersService {
@@ -46,27 +47,38 @@ export class CharactersService {
   async pickManyGrouped(
     needs: Record<CharacterRarityEnum, number>,
     state?: CharacterStateEnum
-  ): Promise<string[]> {
+  ): Promise<PickedCharacter[]> {
     try {
-      const ids: string[] = []
+      const pickedChars: PickedCharacter[] = []
 
       for (const rarity of Object.keys(needs) as CharacterRarityEnum[]) {
         const n = needs[rarity] || 0
         if (n <= 0) continue
 
-        const match: any = { rarity }
+        const match: Record<string, any> = { rarity }
         if (state) match.state = state
 
-        const docs = await this.characterModel.aggregate([
+        const docs = await this.characterModel.aggregate<PickedCharacter>([
           { $match: match },
           { $sample: { size: n } },
-          { $project: { _id: 1 } }
+          {
+            $project: {
+              _id: { $toString: '$_id' },
+              name: 1,
+              rarity: 1,
+              imageUrl: 1
+            }
+          }
         ])
 
-        ids.push(...docs.slice(0, n).map((d) => String(d._id)))
+        while (docs.length < n && docs.length > 0) {
+          docs.push(docs[Math.floor(Math.random() * docs.length)])
+        }
+
+        pickedChars.push(...docs.slice(0, n))
       }
 
-      return ids
+      return pickedChars
     } catch (error) {
       this.logger.error('Error picking characters', error)
       throw new Error('Error picking characters: ' + error.message)
