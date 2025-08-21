@@ -71,6 +71,7 @@ export class CharactersService {
           }
         ])
 
+        // Si no hay suficientes personajes, repetir
         while (docs.length < n && docs.length > 0) {
           docs.push(docs[Math.floor(Math.random() * docs.length)])
         }

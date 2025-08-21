@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
   UnauthorizedException
 } from '@nestjs/common'
@@ -19,6 +20,7 @@ type UserResponse = Omit<User, 'passwordHash'> & { id: string }
 
 @Injectable()
 export class UsersService {
+  private logger = new Logger(UsersService.name)
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>
   ) {}

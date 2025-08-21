@@ -15,25 +15,31 @@ export class GachaHistory {
   @Prop({ type: Number, min: 1, default: 10 })
   pullsCount!: number
 
-  // resultados por rareza
   @Prop({
     type: [
       {
         _id: false,
+        characterId: { type: Types.ObjectId, ref: 'Character', required: true },
+        name: { type: String, required: true },
         rarity: {
           type: String,
           enum: Object.values(CharacterRarityEnum),
           required: true
         },
-        count: { type: Number, min: 0, required: true }
+        imageUrl: { type: String, required: true }
       }
     ],
-    default: []
+    required: true
   })
-  results!: { rarity: CharacterRarityEnum; count: number }[]
+  items!: {
+    characterId: Types.ObjectId
+    name: string
+    rarity: CharacterRarityEnum
+    imageUrl: string
+  }[]
 }
 
 export const GachaHistorySchema = SchemaFactory.createForClass(GachaHistory)
 
+GachaHistorySchema.index({ user: 1, banner: 1, createdAt: -1 })
 GachaHistorySchema.index({ user: 1, createdAt: -1 })
-GachaHistorySchema.index({ banner: 1, createdAt: -1 })
