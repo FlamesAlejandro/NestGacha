@@ -4,6 +4,7 @@ import { CharactersController } from './characters.controller'
 import { MongooseModule } from '@nestjs/mongoose'
 import { RbacModule } from '@access/rbac.module'
 import { Character, CharacterSchema } from '@common/schemas'
+import { CharacterFactory } from './factories/characters.factory'
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { Character, CharacterSchema } from '@common/schemas'
     RbacModule
   ],
   controllers: [CharactersController],
-  providers: [CharactersService],
+  providers: [CharactersService, CharacterFactory],
   exports: [CharactersService]
 })
 export class CharactersModule {}

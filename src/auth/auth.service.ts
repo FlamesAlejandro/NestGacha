@@ -11,7 +11,13 @@ import { JwtService } from '@nestjs/jwt'
 import { User, UserDocument } from '@common/schemas'
 import { RegisterDto, LoginDto } from './dtos/auth.dto'
 
-type UserResponse = Omit<User, 'passwordHash'> & { id: string }
+type UserResponse = {
+  id: string
+  email: string
+  role: string
+  name?: string
+  superAdmin?: boolean
+}
 
 @Injectable()
 export class AuthService {
@@ -32,7 +38,13 @@ export class AuthService {
       name: dto.name
     })
 
-    const user = doc.toObject<UserResponse>()
+    const user: UserResponse = {
+      id: doc._id.toString(),
+      email: doc.email,
+      role: doc.role,
+      name: doc.name,
+      superAdmin: (doc as any).superAdmin ?? false
+    }
     return {
       user,
       ...(await this.sign(user.id, user.email, user.role, false))
@@ -49,7 +61,13 @@ export class AuthService {
     const ok = await bcrypt.compare(dto.password, doc.passwordHash)
     if (!ok) throw new UnauthorizedException('Credenciales inválidas')
 
-    const user = doc.toObject<UserResponse>()
+    const user: UserResponse = {
+      id: doc._id.toString(),
+      email: doc.email,
+      role: doc.role,
+      name: doc.name,
+      superAdmin: (doc as any).superAdmin ?? false
+    }
     return {
       user,
       ...(await this.sign(user.id, user.email, user.role, doc.superAdmin))

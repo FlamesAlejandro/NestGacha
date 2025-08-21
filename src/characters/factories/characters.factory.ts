@@ -15,17 +15,14 @@ export class CharacterFactory {
     return fixed.toLowerCase()
   }
 
-  getDefaultDistribution(total = 20): CharacterRarityEnum[] {
+  getDefaultDistribution(): CharacterRarityEnum[] {
     const base: CharacterRarityEnum[] = [
       ...Array(10).fill(CharacterRarityEnum.Normal),
       ...Array(6).fill(CharacterRarityEnum.Rare),
       ...Array(3).fill(CharacterRarityEnum.SuperRare),
       ...Array(1).fill(CharacterRarityEnum.SuperSuperRare)
     ]
-    if (total <= base.length) return base.slice(0, total)
-    const pool = base.slice()
-    while (pool.length < total) pool.push(CharacterRarityEnum.Normal)
-    return pool
+    return base
   }
 
   private pickImageUrl(images?: JikanImageSet): string | undefined {

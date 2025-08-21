@@ -101,7 +101,7 @@ export class CharactersService {
 
       const chosen = items.slice(0, 20)
 
-      const rarities = this.characterFactory.getDefaultDistribution(20)
+      const rarities = this.characterFactory.getDefaultDistribution()
       const docs = this.characterFactory.mapCharactersToCreate(chosen, rarities)
       const inserted = await this.characterModel.insertMany(docs, {
         ordered: false

@@ -10,6 +10,7 @@ import {
 import { CharactersService } from './characters.service'
 import { CreateCharacterDto } from './dto/create-character.dto'
 import { UpdateCharacterDto } from './dto/update-character.dto'
+import { SeedCharactersDto } from './dto/seed-character.dto'
 
 @Controller('characters')
 export class CharactersController {
@@ -18,6 +19,11 @@ export class CharactersController {
   @Post()
   create(@Body() createCharacterDto: CreateCharacterDto) {
     return this.charactersService.create(createCharacterDto)
+  }
+
+  @Post('import-from-anime/:animeId')
+  importFromAnime(@Param() dto: SeedCharactersDto) {
+    return this.charactersService.importFromAnime(dto)
   }
 
   @Get()

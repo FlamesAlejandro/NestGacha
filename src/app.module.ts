@@ -8,8 +8,8 @@ import { DatabaseModule } from './connections/mongo.connection.import'
 import { RbacModule } from '@access/rbac.module'
 import { GachaModule } from './gacha/gacha.module'
 import { BullModule } from '@nestjs/bull'
-import { CharactersModule } from './characters/characters.module';
-import { BannersModule } from './banners/banners.module';
+import { CharactersModule } from './characters/characters.module'
+import { BannersModule } from './banners/banners.module'
 
 @Module({
   imports: [
